@@ -13,6 +13,9 @@
   border-radius: 5px;
   border: 1px black solid;
   background-color: var(--boardDefaultColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .boardSquare:hover {
