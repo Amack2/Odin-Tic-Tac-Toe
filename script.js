@@ -1,13 +1,36 @@
-//  need to write an array that will hold the information for the game board, the game board has nine squares, it will need a name value and a token?? value (empty, x, o)
+// to do: we need to set up the game board icons to be populated from the array instead of at the same time as the array.
 
 const gameBoard = (() => {
   const allBoardSquares = document.querySelectorAll('.boardSquare');
-  const statusText = document.querySelector('statusText');
+  const turnDiv = document.querySelector('.turnDiv');
+  var roundWon = false;
+
+  const checkArray = () => console.table(gameArray); // for debugging
+
   const restartBtn = document.querySelector('#restartBtn');
   let turnCounter = 1;
-  const PlayerTurn = () => {
-    turnCounter % 2 == 0 ? 'x' : 'o';
+
+  const playerTurn = () => {
+    return turnCounter % 2 == 0 ? player1 : player2; // Self challenge: at the beginning of the game i want the players to choose from 4 icons in its own little pop up (we did it in the card exercise).
   };
+
+  restartBtn.addEventListener('click', () => {
+    console.log('restart');
+    turnCounter = 1;
+    // need to reset array if the gameboard populates out of the array then we wouldnt need to update the gui.
+  });
+
+  updateTurnDiv = () => {
+    if (roundWon === false) {
+      playerName = playerTurn().name;
+
+      turnDiv.innerHTML = `It's ${playerName}'s Turn`;
+    } else if (roundWon === true) {
+      turnDiv.innerHTML = `Player ${winner} won!`; //loop through players and if winner = player.marker return player.name because i want this to say the name of who one.
+      console.log(playerTurn().name); //this prints the looser name atm
+    }
+  };
+
   const winConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -21,43 +44,33 @@ const gameBoard = (() => {
 
   const gameArray = new Array(9).fill('');
 
-  const checkArray = () => console.table(gameArray);
-
   for (let i = 0; i < allBoardSquares.length; i++) {
-    // some elements of this if statement are slightly redundant now, we already have a function that determines the turn. bake that in.
     allBoardSquares[i].addEventListener('click', () => {
-      if (turnCounter % 2 == 0 && gameArray[i] === '') {
-        gameArray[i] = 'o';
-        allBoardSquares[i].innerHTML =
-          '<span class="material-symbols-outlined">circle</span>';
+      if (gameArray[i] === '') {
+        gameArray[i] = playerTurn().marker; //for ease of readability when debugging...
+        allBoardSquares[i].innerHTML = playerTurn().icon;
+        checkWinner();
         turnCounter++;
-      } else if (turnCounter % 2 == 1 && gameArray[i] === '') {
-        gameArray[i] = 'x';
-        allBoardSquares[i].innerHTML =
-          '<span class="material-symbols-outlined">close</span>';
-        turnCounter++;
+        updateTurnDiv();
       }
-      checkWinner();
     });
   }
 
   function checkWinner() {
-    let roundWon = false;
-
     for (let i = 0; i < winConditions.length; i++) {
       const condition = winConditions[i];
+      //   cell a,b,c indicates the position in the win condition array
       const cellA = gameArray[condition[0]];
       const cellB = gameArray[condition[1]];
       const cellC = gameArray[condition[2]];
 
       if (cellA == '' || cellB == '' || cellC == '') {
-        // no wiener
         continue;
       }
       if (cellA == cellB && cellB == cellC) {
         roundWon = true;
         winner = cellA;
-        console.log(`player ${winner} is the winner!`);
+        //update the class of the cells so that we can have some CSS that highlights the cells that won. a lot easier if the board populated out of the array instead of mirroring the array. this should be the next step of the project.
       }
     }
   }
@@ -69,14 +82,23 @@ const gameBoard = (() => {
   // v end of factory v
 })();
 
-const playerFactory = (name, marker) => {
+const playerFactory = (name, marker, icon) => {
   return {
-    name,
-    marker, //do i still need this now? rmb to delete from const player 1/2
-    shoutName() {
-      console.log(`Hello my name is ${name}.`);
-    },
+    name, // i want to populate this from a pop up too
+    marker,
+    icon, //we will eventually use a function to let the player choose their marker at the start of the game.
+    // getIcon() {},
   };
 };
-const player1 = playerFactory('Alex', 'x');
-const player2 = playerFactory('Billy', 'o');
+
+const player1 = playerFactory(
+  'Alex',
+  'x',
+  '<span class="material-symbols-outlined">close</span>'
+);
+
+const player2 = playerFactory(
+  'Billy',
+  'o',
+  '<span class="material-symbols-outlined">circle</span>'
+);
