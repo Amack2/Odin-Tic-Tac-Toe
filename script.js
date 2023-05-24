@@ -3,7 +3,7 @@
 const gameBoard = (() => {
   const allBoardSquares = document.querySelectorAll('.boardSquare');
   const turnDiv = document.querySelector('.turnDiv');
-  var roundWon = false;
+  var roundWon = 'false';
 
   const checkArray = () => console.table(gameArray); // for debugging
 
@@ -22,43 +22,46 @@ const gameBoard = (() => {
 
     console.log('restart');
     turnCounter = 1;
-    roundWon = false;
+    roundWon = 'false';
     updateTurnDiv();
 
     // need to reset array if the gameboard populates out of the array then we wouldnt need to update the gui.
   });
 
   updateTurnDiv = () => {
-    if (roundWon === false) {
-      playerName = playerTurn().name;
+    // playerName = playerTurn().name;
 
-      turnDiv.innerHTML = `It's ${playerName}'s Turn`;
-    } else if (roundWon === true) {
+    if (roundWon === 'false') {
+      turnDiv.innerHTML = `It's ${playerTurn().name}'s Turn`;
+    } else if (roundWon === 'true') {
       turnCounter--;
-      turnDiv.innerHTML = `${playerName} won!`;
-      console.log(playerTurn().name);
+      turnDiv.innerHTML = `${playerTurn().name} won!`;
+    }
+
+    if (roundWon === 'tie') {
+      turnDiv.innerHTML = `TIE!`;
+      console.log('tie');
     }
   };
 
   const winConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [6, 4, 2],
+    [0, 1, 2, 0],
+    [3, 4, 5, 1],
+    [6, 7, 8, 2],
+    [0, 3, 6, 3],
+    [1, 4, 7, 4],
+    [2, 5, 8, 5],
+    [0, 4, 8, 6],
+    [6, 4, 2, 7],
   ];
 
   const gameArray = new Array(9).fill('');
 
   for (let i = 0; i < allBoardSquares.length; i++) {
     allBoardSquares[i].addEventListener('click', () => {
-      if (gameArray[i] === '') {
-        gameArray[i] = playerTurn().marker; //for ease of readability when debugging...
-        //printBoardSquares();
-        allBoardSquares[i].innerHTML = playerTurn().icon; // this will be replaced by a different function.
+      if (allBoardSquares[i].innerHTML === '') {
+        gameArray[i] = playerTurn().marker;
+        allBoardSquares[i].innerHTML = playerTurn().icon;
         checkWinner();
         turnCounter++;
         updateTurnDiv();
@@ -69,18 +72,22 @@ const gameBoard = (() => {
   function checkWinner() {
     for (let i = 0; i < winConditions.length; i++) {
       const condition = winConditions[i];
-      //   cell a,b,c indicates the position in the win condition array
+      //   cell a,b,c indicates the position in the win condition array, d is the id of that sub array
       const cellA = gameArray[condition[0]];
       const cellB = gameArray[condition[1]];
       const cellC = gameArray[condition[2]];
-
+      const cellD = gameArray[condition[3]];
+      console.log(`turn is ${turnCounter}`);
       if (cellA == '' || cellB == '' || cellC == '') {
         continue;
       }
       if (cellA == cellB && cellB == cellC) {
-        roundWon = true;
-        winner = cellA;
-        //update the class of the cells so that we can have some CSS that highlights the cells that won. a lot easier if the board populated out of the array instead of mirroring the array. this should be the next step of the project.
+        roundWon = 'true';
+        console.log(i);
+      }
+
+      if (turnCounter === 9) {
+        roundWon = 'tie'; // doesnt work yet
       }
     }
   }
