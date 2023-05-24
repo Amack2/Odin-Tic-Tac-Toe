@@ -15,8 +15,16 @@ const gameBoard = (() => {
   };
 
   restartBtn.addEventListener('click', () => {
+    for (let i = 0; i < allBoardSquares.length; i++) {
+      gameArray[i] = '';
+      allBoardSquares[i].innerHTML = '';
+    }
+
     console.log('restart');
     turnCounter = 1;
+    roundWon = false;
+    updateTurnDiv();
+
     // need to reset array if the gameboard populates out of the array then we wouldnt need to update the gui.
   });
 
@@ -26,8 +34,9 @@ const gameBoard = (() => {
 
       turnDiv.innerHTML = `It's ${playerName}'s Turn`;
     } else if (roundWon === true) {
-      turnDiv.innerHTML = `Player ${winner} won!`; //loop through players and if winner = player.marker return player.name because i want this to say the name of who one.
-      console.log(playerTurn().name); //this prints the looser name atm
+      turnCounter--;
+      turnDiv.innerHTML = `${playerName} won!`;
+      console.log(playerTurn().name);
     }
   };
 
@@ -48,7 +57,8 @@ const gameBoard = (() => {
     allBoardSquares[i].addEventListener('click', () => {
       if (gameArray[i] === '') {
         gameArray[i] = playerTurn().marker; //for ease of readability when debugging...
-        allBoardSquares[i].innerHTML = playerTurn().icon;
+        //printBoardSquares();
+        allBoardSquares[i].innerHTML = playerTurn().icon; // this will be replaced by a different function.
         checkWinner();
         turnCounter++;
         updateTurnDiv();
