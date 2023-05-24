@@ -18,14 +18,12 @@ const gameBoard = (() => {
     for (let i = 0; i < allBoardSquares.length; i++) {
       gameArray[i] = '';
       allBoardSquares[i].innerHTML = '';
+      allBoardSquares[i].classList.remove('winningSquare');
     }
-
     console.log('restart');
     turnCounter = 1;
     roundWon = 'false';
     updateTurnDiv();
-
-    // need to reset array if the gameboard populates out of the array then we wouldnt need to update the gui.
   });
 
   updateTurnDiv = () => {
@@ -45,18 +43,19 @@ const gameBoard = (() => {
   };
 
   const winConditions = [
-    [0, 1, 2, 0],
-    [3, 4, 5, 1],
-    [6, 7, 8, 2],
-    [0, 3, 6, 3],
-    [1, 4, 7, 4],
-    [2, 5, 8, 5],
-    [0, 4, 8, 6],
-    [6, 4, 2, 7],
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [6, 4, 2],
   ];
 
   const gameArray = new Array(9).fill('');
 
+  // dont let this run if the game if roundWon = true or tie
   for (let i = 0; i < allBoardSquares.length; i++) {
     allBoardSquares[i].addEventListener('click', () => {
       if (allBoardSquares[i].innerHTML === '') {
@@ -72,25 +71,33 @@ const gameBoard = (() => {
   function checkWinner() {
     for (let i = 0; i < winConditions.length; i++) {
       const condition = winConditions[i];
-      //   cell a,b,c indicates the position in the win condition array, d is the id of that sub array
+      //   cell a,b,c indicates the position in the win condition array,
       const cellA = gameArray[condition[0]];
       const cellB = gameArray[condition[1]];
       const cellC = gameArray[condition[2]];
-      const cellD = gameArray[condition[3]];
-      console.log(`turn is ${turnCounter}`);
+
       if (cellA == '' || cellB == '' || cellC == '') {
         continue;
       }
       if (cellA == cellB && cellB == cellC) {
         roundWon = 'true';
-        console.log(i);
-      }
 
-      if (turnCounter === 9) {
-        roundWon = 'tie'; // doesnt work yet
+        const winSquare1 = condition[0];
+        const winSquare2 = condition[1];
+        const winSquare3 = condition[2];
+
+        allBoardSquares[winSquare1].classList.add('winningSquare');
+        allBoardSquares[winSquare2].classList.add('winningSquare');
+        allBoardSquares[winSquare3].classList.add('winningSquare');
+        console.log(`im here ${winSquare1}`);
+      }
+      if (turnCounter === 9 && roundWon === 'false') {
+        roundWon = 'tie';
       }
     }
   }
+
+  //   }
 
   //   anything returned below can be used globally
   return {

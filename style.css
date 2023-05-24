@@ -21,3 +21,7 @@
 .boardSquare:hover {
   filter: brightness(90%);
 }
+
+.boardSquare.winningSquare {
+  background-color: gold;
+}
